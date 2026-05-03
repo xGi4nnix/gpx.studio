@@ -15,10 +15,12 @@ ARG NGINX_VERSION=1.27-alpine
 FROM node:${NODE_VERSION}-alpine AS gpx-builder
 WORKDIR /app/gpx
 
-# Install only what's needed to build the lib first (better cache hit-rate)
+# Install deps first (good Docker layer caching). gpx's package.json declares
+# a postinstall hook that runs `tsc` — we must skip it here because the source
+# tree (src/, tsconfig.json) isn't COPYed yet. We run the build explicitly
+# below once everything is in place.
 COPY gpx/package.json gpx/package-lock.json ./
-# postinstall already runs `tsc`, but we run build explicitly to be safe
-RUN npm ci
+RUN npm ci --ignore-scripts
 
 COPY gpx/ ./
 RUN npm run build
