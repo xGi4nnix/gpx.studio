@@ -1,0 +1,26 @@
+# Don't ship VCS / editor / OS junk into the build context
+.git
+.github
+.vscode
+.DS_Store
+
+# Don't copy local node_modules into the build context — they'll be rebuilt.
+# Cuts the build context from hundreds of MB to a few.
+**/node_modules
+
+# Build outputs & SvelteKit caches
+**/dist
+**/build
+**/.svelte-kit
+
+# Local env files — secrets are passed via build args, not COPYed in
+**/.env
+**/.env.*
+!**/.env.example
+
+# Docs & misc that aren't needed in the image
+README.md
+DEPLOY.md
+LICENSE
+crowdin.yml
+*.log

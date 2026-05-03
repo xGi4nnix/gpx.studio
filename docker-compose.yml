@@ -1,0 +1,36 @@
+# gpx.studio — Portainer-ready compose file
+#
+# Deploy via Portainer:
+#   Stacks → Add stack → Repository
+#     Repository URL:          https://github.com/xGi4nnix/gpx.studio.git
+#     Repository reference:    refs/heads/main   (or whichever branch you ship)
+#     Compose path:            docker-compose.yml
+#     Environment variables:   PUBLIC_MAPTILER_KEY  (see .env.example)
+#
+# Local sanity check:
+#   PUBLIC_MAPTILER_KEY=xxx docker compose up --build
+
+services:
+    gpx-studio:
+        build:
+            context: .
+            dockerfile: Dockerfile
+            args:
+                # Read from the stack's environment (Portainer Env Vars or .env).
+                # If unset, build will succeed but the map won't load.
+                PUBLIC_MAPTILER_KEY: ${PUBLIC_MAPTILER_KEY:?PUBLIC_MAPTILER_KEY must be set}
+                # Leave empty for hosting at the domain root.
+                # Set to e.g. "/gpx" if you serve under a subpath.
+                BASE_PATH: ${BASE_PATH:-}
+        image: gpx-studio:local
+        container_name: gpx-studio
+        restart: unless-stopped
+        ports:
+            # host:container — change the left side if 3000 is already in use.
+            - '${HOST_PORT:-3000}:80'
+        healthcheck:
+            test: ['CMD', 'wget', '-qO-', 'http://127.0.0.1/']
+            interval: 30s
+            timeout: 5s
+            retries: 3
+            start_period: 10s

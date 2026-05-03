@@ -1,1 +1,6 @@
 .DS_Store
+
+# Local env files — secrets must not be committed
+.env
+.env.local
+.env.*.local
