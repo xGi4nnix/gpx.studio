@@ -25,6 +25,10 @@ services:
         image: gpx-studio:local
         container_name: gpx-studio
         restart: unless-stopped
+        environment:
+            # Extra CSP frame-ancestors entries beyond same-origin.
+            # Example: "http://85.215.133.131:3000"
+            FRAME_ANCESTORS: ${FRAME_ANCESTORS:-}
         ports:
             # host:container — change the left side if 3000 is already in use.
             - '${HOST_PORT:-3000}:80'

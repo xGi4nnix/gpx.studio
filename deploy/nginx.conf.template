@@ -6,6 +6,7 @@
 #   • long-cache for hashed assets in /_app/
 #   • no cache for index.html so deploys roll out immediately
 #   • gzip for text payloads
+#   • a configurable frame-ancestors policy for embedding the editor
 
 server {
     listen 80 default_server;
@@ -21,6 +22,10 @@ server {
     tcp_nodelay on;
     keepalive_timeout 65;
     server_tokens off;
+
+    # Security: allow same-origin by default and optionally extra configured
+    # parent origins via FRAME_ANCESTORS.
+    add_header Content-Security-Policy "frame-ancestors 'self' ${FRAME_ANCESTORS};" always;
 
     # Gzip
     gzip on;

@@ -53,8 +53,9 @@ RUN echo "PUBLIC_MAPTILER_KEY=${PUBLIC_MAPTILER_KEY}" > .env \
 # ── Stage 3: serve the static build with nginx ───────────────────────────────
 FROM nginx:${NGINX_VERSION} AS runtime
 
-# Replace default config with our SPA-friendly one
-COPY deploy/nginx.conf /etc/nginx/conf.d/default.conf
+# Use nginx's built-in template rendering so the frame-ancestors policy can be
+# configured via environment variables at container start.
+COPY deploy/nginx.conf.template /etc/nginx/templates/default.conf.template
 
 # Copy the prerendered/static build output
 COPY --from=website-builder /app/website/build /usr/share/nginx/html

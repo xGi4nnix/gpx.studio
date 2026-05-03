@@ -30,16 +30,22 @@ auf dem Host auf `${HOST_PORT}` gemappt (default `3000`).
    - **Compose path**: `docker-compose.yml`
 4. **Environment variables** (unten in der Maske, *nicht* in der Compose-Datei):
 
-   | Key                    | Value                  |
-   | ---------------------- | ---------------------- |
-   | `PUBLIC_MAPTILER_KEY`  | `t6t0Eq90DX931I7CZMzt` |
-   | `HOST_PORT`            | `3000` *(optional)*    |
-   | `BASE_PATH`            | *(leer lassen)*        |
+| Key                    | Value                  |
+| ---------------------- | ---------------------- |
+| `PUBLIC_MAPTILER_KEY`  | `t6t0Eq90DX931I7CZMzt` |
+| `HOST_PORT`            | `3000` *(optional)*    |
+| `BASE_PATH`            | *(leer lassen)*        |
+| `FRAME_ANCESTORS`      | `http://85.215.133.131:3000` *(optional)* |
 
    > Diese Variablen werden beim `docker compose build` als Build-Args an den
    > Dockerfile durchgereicht. Der MapTiler-Key wird in den Client-Bundle
    > eingebacken — das ist bei MapTiler so vorgesehen; sichere ihn ggf. in der
    > MapTiler-Konsole per Domain-Restriction ab.
+
+   > `FRAME_ANCESTORS` steuert, welche *zusätzlichen* Parent-Origins den Editor
+   > per iFrame einbetten dürfen. Die eigene Domain bleibt immer erlaubt.
+   > Wenn du zusätzlich eure Website freigeben willst, setze zum Beispiel:
+   > `http://85.215.133.131:3000`.
 
 5. **Deploy the stack** klicken. Beim ersten Mal dauert der Build je nach
    vServer-CPU 2–6 Minuten (Node-Module + SvelteKit-Build).
@@ -78,7 +84,29 @@ DNS-A-Record nötig.
 
 ---
 
-## 3. Update / Re-Deploy nach git push
+## 3. Editor per iFrame einbinden
+
+Für den Editor selbst nutzt du die App-Route mit dem `iframe=1`-Schalter:
+
+```liquid
+<iframe
+  src="https://gpx.deinedomain.de/en/app?iframe=1"
+  title="gpx.studio editor"
+  width="100%"
+  height="900"
+  loading="lazy"
+  style="border: 0; display: block;"
+  allow="clipboard-read; clipboard-write"
+></iframe>
+```
+
+Wenn du eine andere Sprache willst, ersetze einfach `en` durch den gewünschten
+Locale-Code. Falls du den Editor in einer Sub-Page oder einem CMS einbaust,
+ist das normalerweise die robusteste Variante.
+
+---
+
+## 4. Update / Re-Deploy nach git push
 
 In Portainer:
 
@@ -94,7 +122,7 @@ Container aus. Downtime: kurz (< 10 s) während nginx restartet.
 
 ---
 
-## 4. Lokal testen (vor dem Push)
+## 5. Lokal testen (vor dem Push)
 
 Auf einem Rechner mit Docker:
 
@@ -108,7 +136,7 @@ Beenden mit `Ctrl+C`, aufräumen mit `docker compose down`.
 
 ---
 
-## 5. Eigene Anpassungen pflegen
+## 6. Eigene Anpassungen pflegen
 
 Du arbeitest auf deinem Fork (`xGi4nnix/gpx.studio`). Empfohlener Flow:
 
@@ -140,7 +168,7 @@ git push origin main
 
 ---
 
-## 6. Troubleshooting
+## 7. Troubleshooting
 
 **Build bricht ab mit `PUBLIC_MAPTILER_KEY must be set`**
 → Env-Var in Portainer nicht gesetzt. Stack-Editor → Environment variables

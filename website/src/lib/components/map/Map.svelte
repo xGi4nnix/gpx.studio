@@ -29,7 +29,11 @@
             webgl2Supported = false;
             return;
         }
-        if (window.top !== window.self && !page.route.id?.includes('embed')) {
+        if (
+            window.top !== window.self &&
+            !page.url.searchParams.has('iframe') &&
+            !page.route.id?.includes('embed')
+        ) {
             embeddedApp = true;
             return;
         }
