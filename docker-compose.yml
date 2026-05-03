@@ -22,8 +22,6 @@ services:
                 # Leave empty for hosting at the domain root.
                 # Set to e.g. "/gpx" if you serve under a subpath.
                 BASE_PATH: ${BASE_PATH:-}
-        image: gpx-studio:local
-        container_name: gpx-studio
         restart: unless-stopped
         environment:
             # Extra CSP frame-ancestors entries beyond same-origin.
